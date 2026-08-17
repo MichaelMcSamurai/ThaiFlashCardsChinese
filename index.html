@@ -5216,7 +5216,12 @@ const phrasesData = [
 // This list is derived from whatever tags exist, so future day additions
 // get their own filter chip automatically, same pattern as the Language
 // Class deck.
-const phraseClassNames = ['General', ...new Set(phrasesData.filter(p => p.cls).map(p => p.cls))];
+const phraseClassNames = ['General', ...new Set(phrasesData.filter(p => p.cls).map(p => p.cls))].sort((a, b) => {
+  const na = parseInt((a || '').replace('Class ', ''), 10), nb = parseInt((b || '').replace('Class ', ''), 10);
+  if (isNaN(na)) return -1;
+  if (isNaN(nb)) return 1;
+  return na - nb;
+});
 
 // The topic categories (Greetings, Food, etc.) - "All" isn't a real
 // category, it's the master toggle button for this whole row.
@@ -7572,7 +7577,12 @@ const languageClassData = [ {  "thai": "เคย",  "phonetic": "khɔ̌əy",  "
 // Filter chips for the Language Class deck are derived from whatever class
 // labels exist in the data, so adding a new "Class 4", "Class 5", etc. batch
 // of cards automatically gets its own filter button - no code changes needed.
-const languageClassFilters = ['All', ...new Set(languageClassData.map(p => p.cls))];
+const languageClassFilters = ['All', ...new Set(languageClassData.map(p => p.cls))].sort((a, b) => {
+  const na = parseInt((a || '').replace('Class ', ''), 10), nb = parseInt((b || '').replace('Class ', ''), 10);
+  if (isNaN(na)) return -1;
+  if (isNaN(nb)) return 1;
+  return na - nb;
+});
 const languageClassNames = languageClassFilters.slice(1); // just the real class labels, no "All"
 
 // ============================================================
