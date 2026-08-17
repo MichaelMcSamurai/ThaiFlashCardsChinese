@@ -8346,6 +8346,15 @@ function nextCard(deckId) {
     deck.isFlipped = false;
     snapToFrontInstantly(deckId);
     renderCard(deckId);
+  } else if (deck.filtered.length > 0) {
+    // Reached the end of the deck - loop back to the start with the
+    // still-unknown ("live") cards reshuffled, so you can keep hitting
+    // Next to drill whatever's left until everything's marked known.
+    shuffleArray(deck.filtered);
+    deck.currentIndex = 0;
+    deck.isFlipped = false;
+    snapToFrontInstantly(deckId);
+    renderCard(deckId);
   }
 }
 
