@@ -1262,7 +1262,7 @@
   <div class="home-wrap">
     <div class="home-header">
       <div class="logo-thai">ศึกษาภาษาไทย</div>
-      <h1>Thai <span>Study</span><span class="version-tag">v0.03b</span></h1>
+      <h1>Thai <span>Study</span><span class="version-tag">v0.04</span></h1>
       <p class="subtitle" id="home-subtitle">选择一个卡组开始学习</p>
       <div class="zh-variant-toggle">
         <label class="zh-variant-option">
@@ -7582,6 +7582,134 @@ const languageClassData = [ {  "thai": "เคย",  "phonetic": "khɔ̌əy",  "
   "cls": "Class 11",
   "zh": "星期/周",
   "zhTW": "星期/周"
+ },
+ {
+  "thai": "รองเท้า 3 คู่",
+  "phonetic": "rɔ̄ɔŋtháaw sǎam khûu",
+  "english": "3 pairs of shoes",
+  "cls": "Classifiers",
+  "zh": "3双鞋子",
+  "zhTW": "3雙鞋子"
+ },
+ {
+  "thai": "แตงโม 1 ชิ้น",
+  "phonetic": "tɛɛŋmōo nʉ̀ŋ chín",
+  "english": "1 slice of watermelon",
+  "cls": "Classifiers",
+  "zh": "1片西瓜",
+  "zhTW": "1片西瓜"
+ },
+ {
+  "thai": "หนังสือ 5 เล่ม",
+  "phonetic": "nāŋsʉ̌ʉ hâa lêm",
+  "english": "5 books",
+  "cls": "Classifiers",
+  "zh": "5本书",
+  "zhTW": "5本書"
+ },
+ {
+  "thai": "ทุเรียน 2 ชิ้น",
+  "phonetic": "thúrīan sɔ̌ng chín",
+  "english": "2 pieces of durian",
+  "cls": "Classifiers",
+  "zh": "2块榴莲",
+  "zhTW": "2塊榴槤"
+ },
+ {
+  "thai": "เสื้อ 4 ตัว",
+  "phonetic": "sʉ̂a sìi tūa",
+  "english": "4 shirts",
+  "cls": "Classifiers",
+  "zh": "4件衬衫",
+  "zhTW": "4件襯衫"
+ },
+ {
+  "thai": "แว่นตา 1 อัน",
+  "phonetic": "wɛ̂ntāa nʉ̀ŋ 'ān",
+  "english": "1 pair of glasses",
+  "cls": "Classifiers",
+  "zh": "1副眼镜",
+  "zhTW": "1副眼鏡"
+ },
+ {
+  "thai": "นักเรียน 6 คน",
+  "phonetic": "nákrīan hòk khōn",
+  "english": "6 students",
+  "cls": "Classifiers",
+  "zh": "6个学生",
+  "zhTW": "6個學生"
+ },
+ {
+  "thai": "กระดาษ 7 แผ่น",
+  "phonetic": "kradàat jèt phèn",
+  "english": "7 sheets of paper",
+  "cls": "Classifiers",
+  "zh": "7张纸",
+  "zhTW": "7張紙"
+ },
+ {
+  "thai": "ดอกไม้ 8 ดอก",
+  "phonetic": "dɔ̀ɔkmáay pàet dɔ̀ɔk",
+  "english": "8 flowers",
+  "cls": "Classifiers",
+  "zh": "8朵花",
+  "zhTW": "8朵花"
+ },
+ {
+  "thai": "แหวน 9 วง",
+  "phonetic": "wɛ̌ɛn kâao wōŋ",
+  "english": "9 rings",
+  "cls": "Classifiers",
+  "zh": "9个戒指",
+  "zhTW": "9個戒指"
+ },
+ {
+  "thai": "จดหมาย 10 ฉบับ",
+  "phonetic": "còtmǎay sìp chabàp",
+  "english": "10 letters",
+  "cls": "Classifiers",
+  "zh": "10封信",
+  "zhTW": "10封信"
+ },
+ {
+  "thai": "เก้าอี้ 11 ตัว",
+  "phonetic": "kâw'îi sìp-èt tūa",
+  "english": "11 chairs",
+  "cls": "Classifiers",
+  "zh": "11把椅子",
+  "zhTW": "11把椅子"
+ },
+ {
+  "thai": "โต๊ะ 12 ตัว",
+  "phonetic": "tó sìp-sǒng tūa",
+  "english": "12 tables",
+  "cls": "Classifiers",
+  "zh": "12张桌子",
+  "zhTW": "12張桌子"
+ },
+ {
+  "thai": "ปลา 13 ตัว",
+  "phonetic": "plāa sìp-sǎam tūa",
+  "english": "13 fish",
+  "cls": "Classifiers",
+  "zh": "13条鱼",
+  "zhTW": "13條魚"
+ },
+ {
+  "thai": "กล้วย 1 หวี",
+  "phonetic": "klûay nʉ̀ŋ wǐi",
+  "english": "1 bunch of bananas",
+  "cls": "Classifiers",
+  "zh": "1串香蕉",
+  "zhTW": "1串香蕉"
+ },
+ {
+  "thai": "ขนมปัง 3 แผ่น",
+  "phonetic": "khanǒmpāŋ sǎam phèn",
+  "english": "3 slices of bread",
+  "cls": "Classifiers",
+  "zh": "3片面包",
+  "zhTW": "3片麵包"
  }
 ];
 
@@ -7590,8 +7718,9 @@ const languageClassData = [ {  "thai": "เคย",  "phonetic": "khɔ̌əy",  "
 // of cards automatically gets its own filter button - no code changes needed.
 const languageClassFilters = ['All', ...new Set(languageClassData.map(p => p.cls))].sort((a, b) => {
   const na = parseInt((a || '').replace('Class ', ''), 10), nb = parseInt((b || '').replace('Class ', ''), 10);
-  if (isNaN(na)) return -1;
-  if (isNaN(nb)) return 1;
+  // non-numeric labels (like "Classifiers") sort after all numbered classes
+  if (isNaN(na)) return 1;
+  if (isNaN(nb)) return -1;
   return na - nb;
 });
 const languageClassNames = languageClassFilters.slice(1); // just the real class labels, no "All"
