@@ -969,7 +969,7 @@
   .screen.active { display: flex; }
 
   /* ============ START SCREEN ============ */
-  #wc-screen-start {
+  #wc-screen-start, #tc-screen-start {
     justify-content: center;
     padding: 24px;
     text-align: center;
@@ -1021,7 +1021,7 @@
   .best-score b { color: var(--thai-gold); font-weight: 500; }
 
   /* ============ GAME SCREEN ============ */
-  #wc-screen-game {
+  #wc-screen-game, #tc-screen-game {
     justify-content: flex-start;
   }
 
@@ -1194,7 +1194,7 @@
   }
 
   /* ============ END SCREEN ============ */
-  #wc-screen-end {
+  #wc-screen-end, #tc-screen-end {
     justify-content: center;
     padding: 24px;
     text-align: center;
@@ -1253,6 +1253,129 @@
     .bubble.correct, .fanfare-burst { animation: none; }
   }
 
+  /* ============ THAI CLOCK GAME ============ */
+  .tc-clock-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 6px 0 28px;
+  }
+
+  .tc-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 0 20px;
+  }
+
+  .tc-choice-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tc-choice-btn:active { transform: scale(0.96); }
+
+  .tc-choice-thai { font-size: 19px; color: var(--text); line-height: 1.2; }
+  .tc-choice-phon { font-size: 12px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+
+  .tc-choice-btn.correct {
+    border-color: var(--success);
+    background: #142914;
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.25);
+  }
+  .tc-choice-btn.correct .tc-choice-thai,
+  .tc-choice-btn.correct .tc-choice-phon { color: var(--success); }
+
+  .tc-choice-btn.wrong {
+    border-color: var(--danger);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .tc-prompt {
+    text-align: center;
+    margin-bottom: 22px;
+    padding: 0 20px;
+  }
+  .tc-prompt-thai {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(28px, 7vw, 40px);
+    margin-bottom: 6px;
+  }
+  .tc-prompt-phon {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  .tc-speak-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tc-speak-btn:active { transform: scale(0.96); }
+
+  .tc-clock-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 340px;
+    padding: 0 20px;
+  }
+  .tc-clock-choice {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tc-clock-choice:active { transform: scale(0.96); }
+  .tc-clock-choice.correct {
+    border-color: var(--success);
+    background: #142914;
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.25);
+  }
+  .tc-clock-choice.wrong {
+    border-color: var(--danger);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .tc-reveal-caption {
+    margin-top: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--thai-gold);
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 420px) {
+    .tc-choice-thai { font-size: 17px; }
+    .tc-choices, .tc-clock-choices { gap: 10px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1262,7 +1385,7 @@
   <div class="home-wrap">
     <div class="home-header">
       <div class="logo-thai">ศึกษาภาษาไทย</div>
-      <h1>Thai <span>Study</span><span class="version-tag">v0.05f</span></h1>
+      <h1>Thai <span>Study</span><span class="version-tag">v0.06</span></h1>
       <p class="subtitle" id="home-subtitle">选择一个卡组开始学习</p>
       <div class="zh-variant-toggle">
         <label class="zh-variant-option">
@@ -1313,6 +1436,19 @@
         <div class="deck-progress-row">
           <div class="deck-progress-track"><div class="deck-progress-fill" id="home-progress-wordgame" style="background: var(--thai-gold);"></div></div>
           <div class="deck-progress-label" id="home-progress-label-wordgame"><b>0</b> best score</div>
+        </div>
+      </div>
+
+      <div class="deck-card" onclick="enterDeck('clockgame')">
+        <div class="deck-card-top">
+          <div class="deck-thai-label">นาฬิกา</div>
+          <div class="deck-count-tag" id="home-count-clockgame">12 rounds</div>
+        </div>
+        <div class="deck-title" id="home-title-clockgame">泰式时钟</div>
+        <div class="deck-desc" id="home-desc-clockgame">认识泰式六时制读法——tii、mōoŋ、bàay 与 thûm</div>
+        <div class="deck-progress-row">
+          <div class="deck-progress-track"><div class="deck-progress-fill" id="home-progress-clockgame" style="background: var(--thai-gold);"></div></div>
+          <div class="deck-progress-label" id="home-progress-label-clockgame"><b>0</b> best score</div>
         </div>
       </div>
     </div>
@@ -1515,6 +1651,54 @@
   <div class="end-buttons">
     <button class="btn-secondary" id="wc-btn-end-home" data-i18n="wcQuit">退出</button>
     <button class="btn-start" id="wc-btn-end-again" data-i18n="wcEndAgain">再玩一次</button>
+  </div>
+</div>
+</div>
+
+<div class="view" id="view-clockgame">
+<!-- ============ START SCREEN ============ -->
+<div class="screen active" id="tc-screen-start">
+  <button class="btn-back" id="tc-btn-back-home" style="position:absolute; top:16px; left:16px;" onclick="goHome()">&larr; <span data-i18n="backLabel">卡组</span></button>
+  <div class="logo-thai">นาฬิกา</div>
+  <h1 class="title" data-i18n="tcTitle">泰式时钟</h1>
+  <p class="start-desc" data-i18n="tcStartDesc">泰语用传统的六时制报时：tii 表示深夜，mōoŋ cháaw 表示上午，bàay / mōoŋ yēn 表示下午与傍晚，thûm 表示入夜后。看时钟选出对应的泰语说法，或听发音选出对应的时钟。</p>
+  <button class="btn-start" id="tc-btn-start" data-i18n="tcStartBtn">开始游戏</button>
+  <div class="best-score" id="tc-best-score-display"></div>
+</div>
+
+<!-- ============ GAME SCREEN ============ -->
+<div class="screen" id="tc-screen-game">
+  <div class="game-hud">
+    <div class="hud-stat">
+      <span data-i18n="wcHudScore">得分</span>
+      <b id="tc-hud-score">0</b>
+    </div>
+    <div class="hud-stat right">
+      <span data-i18n="wcHudRound">回合</span>
+      <b id="tc-hud-round">1 / 12</b>
+    </div>
+  </div>
+
+  <div class="target-banner">
+    <button class="btn-quit" id="tc-btn-quit-game">&times; <span data-i18n="wcQuit">退出</span></button>
+    <div class="target-label" id="tc-mode-label">这是几点？</div>
+  </div>
+
+  <div class="tc-round-body" id="tc-round-body"></div>
+
+  <div class="round-footer">
+    <button class="btn-next" id="tc-btn-next"><span data-i18n="navNext">下一个</span> &rarr;</button>
+  </div>
+</div>
+
+<!-- ============ END SCREEN ============ -->
+<div class="screen" id="tc-screen-end">
+  <div class="end-label" data-i18n="tcEndLabel">游戏完成</div>
+  <div class="end-score" id="tc-end-score">0</div>
+  <div class="end-sub"><span data-i18n="wcEndSub">分 · 最高分：</span><b id="tc-end-best">0</b></div>
+  <div class="end-buttons">
+    <button class="btn-secondary" id="tc-btn-end-home" data-i18n="wcQuit">退出</button>
+    <button class="btn-start" id="tc-btn-end-again" data-i18n="wcEndAgain">再玩一次</button>
   </div>
 </div>
 </div>
@@ -7932,6 +8116,8 @@ const HOME_STRINGS = {
   descPhrases: { cn: '常用词汇与短语，按类别与课程分类', tw: '常用詞彙與短語，按類別與課程分類' },
   titleWordgame: { cn: '抓词游戏', tw: '抓詞遊戲' },
   descWordgame: { cn: '在时间耗尽前点击对应的泰语词', tw: '在時間耗盡前點選對應的泰語詞' },
+  titleClockgame: { cn: '泰式时钟', tw: '泰式時鐘' },
+  descClockgame: { cn: '认识泰式六时制读法——tii、mōoŋ、bàay 与 thûm', tw: '認識泰式六時制讀法——tii、mōoŋ、bàay 與 thûm' },
   cardsUnit: { cn: '张卡片', tw: '張卡片' },
   roundsUnit: { cn: '轮', tw: '輪' },
   knownPrefix: { cn: '已掌握', tw: '已掌握' },
@@ -7948,6 +8134,8 @@ function renderHomeChrome() {
   setText('home-desc-phrases', hs('descPhrases'));
   setText('home-title-wordgame', hs('titleWordgame'));
   setText('home-desc-wordgame', hs('descWordgame'));
+  setText('home-title-clockgame', hs('titleClockgame'));
+  setText('home-desc-clockgame', hs('descClockgame'));
 }
 
 function setZhVariant(v) {
@@ -7965,6 +8153,9 @@ function setZhVariant(v) {
   }
   if (typeof WordCatch !== 'undefined' && WordCatch.refreshLanguage) {
     WordCatch.refreshLanguage();
+  }
+  if (typeof ThaiClock !== 'undefined' && ThaiClock.refreshLanguage) {
+    ThaiClock.refreshLanguage();
   }
 }
 
@@ -8160,6 +8351,34 @@ const I18N = {
   "wcTargetLabel": {
     "cn": "找出对应的泰语单词",
     "tw": "找出對應的泰語單詞"
+  },
+  "tcTitle": {
+    "cn": "泰式时钟",
+    "tw": "泰式時鐘"
+  },
+  "tcStartDesc": {
+    "cn": "泰语用传统的六时制报时：tii 表示深夜，mōoŋ cháaw 表示上午，bàay / mōoŋ yēn 表示下午与傍晚，thûm 表示入夜后。看时钟选出对应的泰语说法，或听发音选出对应的时钟。",
+    "tw": "泰語用傳統的六時制報時：tii 表示深夜，mōoŋ cháaw 表示上午，bàay / mōoŋ yēn 表示下午與傍晚，thûm 表示入夜後。看時鐘選出對應的泰語說法，或聽發音選出對應的時鐘。"
+  },
+  "tcStartBtn": {
+    "cn": "开始游戏",
+    "tw": "開始遊戲"
+  },
+  "tcEndLabel": {
+    "cn": "游戏完成",
+    "tw": "遊戲完成"
+  },
+  "tcModeClockToText": {
+    "cn": "这是几点？",
+    "tw": "這是幾點？"
+  },
+  "tcModeTextToClock": {
+    "cn": "点选对应的时钟",
+    "tw": "點選對應的時鐘"
+  },
+  "tcListenBtn": {
+    "cn": "收听",
+    "tw": "聆聽"
   }
 };
 
@@ -8333,6 +8552,12 @@ function enterDeck(deckId) {
     return;
   }
 
+  if (deckId === 'clockgame') {
+    showView('view-clockgame');
+    window.scrollTo(0, 0);
+    return;
+  }
+
   const deck = decks[deckId];
   if (!deck.initialized) {
     deck.initialized = true;
@@ -8379,6 +8604,19 @@ function renderHomeStats() {
     if (gameLabelEl) gameLabelEl.innerHTML = hs('bestScoreLabel') + ' <b>' + best + '</b>';
     const gameCountEl = document.getElementById('home-count-wordgame');
     if (gameCountEl) gameCountEl.textContent = '10' + hs('roundsUnit');
+  } catch (e) {
+    // localStorage unavailable - game tile just shows static defaults
+  }
+
+  // Thai Clock game also uses a best-score model
+  try {
+    const cbest = parseInt(localStorage.getItem('thai-clock-zh-best') || '0', 10);
+    const clockFillEl = document.getElementById('home-progress-clockgame');
+    if (clockFillEl) clockFillEl.style.width = Math.min(cbest / 1200 * 100, 100) + '%';
+    const clockLabelEl = document.getElementById('home-progress-label-clockgame');
+    if (clockLabelEl) clockLabelEl.innerHTML = hs('bestScoreLabel') + ' <b>' + cbest + '</b>';
+    const clockCountEl = document.getElementById('home-count-clockgame');
+    if (clockCountEl) clockCountEl.textContent = '12' + hs('roundsUnit');
   } catch (e) {
     // localStorage unavailable - game tile just shows static defaults
   }
@@ -10001,7 +10239,7 @@ function nextOrEnd() {
 // SCREEN MANAGEMENT
 // ============================================================
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#view-wordgame .screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
@@ -10070,6 +10308,292 @@ return { startGame, quitToHome, nextOrEnd, renderBestScore, refreshLanguage: fun
 })();
 
 WordCatch.init();
+
+const ThaiClock = (function() {
+
+const CLOCK_DATA = [
+  { hour24: 0,  thai: "เที่ยงคืน",      phonetic: "thîaŋkhʉ̄ʉn",   cnLabel: "午夜 (00:00)", period: "khuun" },
+  { hour24: 1,  thai: "ตี 1",           phonetic: "tīi 1",         cnLabel: "凌晨1:00", period: "tii" },
+  { hour24: 2,  thai: "ตี 2",           phonetic: "tīi 2",         cnLabel: "凌晨2:00", period: "tii" },
+  { hour24: 3,  thai: "ตี 3",           phonetic: "tīi 3",         cnLabel: "凌晨3:00", period: "tii" },
+  { hour24: 4,  thai: "ตี 4",           phonetic: "tīi 4",         cnLabel: "凌晨4:00", period: "tii" },
+  { hour24: 5,  thai: "ตี 5",           phonetic: "tīi 5",         cnLabel: "凌晨5:00", period: "tii" },
+  { hour24: 6,  thai: "6 โมงเช้า",      phonetic: "6 mōoŋ cháaw",  cnLabel: "早上6:00", period: "chaaw" },
+  { hour24: 7,  thai: "7 โมงเช้า",      phonetic: "7 mōoŋ cháaw",  cnLabel: "早上7:00", period: "chaaw" },
+  { hour24: 8,  thai: "8 โมงเช้า",      phonetic: "8 mōoŋ cháaw",  cnLabel: "早上8:00", period: "chaaw" },
+  { hour24: 9,  thai: "9 โมงเช้า",      phonetic: "9 mōoŋ cháaw",  cnLabel: "上午9:00", period: "chaaw" },
+  { hour24: 10, thai: "10 โมงเช้า",     phonetic: "10 mōoŋ cháaw", cnLabel: "上午10:00", period: "chaaw" },
+  { hour24: 11, thai: "11 โมงเช้า",     phonetic: "11 mōoŋ cháaw", cnLabel: "上午11:00", period: "chaaw" },
+  { hour24: 12, thai: "เที่ยง",         phonetic: "thîaŋ",         cnLabel: "中午 (12:00)", period: "thiang" },
+  { hour24: 13, thai: "บ่ายโมง",        phonetic: "bàay mōoŋ",     cnLabel: "下午1:00", period: "baay" },
+  { hour24: 14, thai: "บ่าย 2 โมง",     phonetic: "bàay 2 mōoŋ",   cnLabel: "下午2:00", period: "baay" },
+  { hour24: 15, thai: "บ่าย 3 โมง",     phonetic: "bàay 3 mōoŋ",   cnLabel: "下午3:00", period: "baay" },
+  { hour24: 16, thai: "บ่าย 4 โมง",     phonetic: "bàay 4 mōoŋ",   cnLabel: "下午4:00", period: "baay" },
+  { hour24: 17, thai: "5 โมงเย็น",      phonetic: "5 mōoŋ yēn",    cnLabel: "傍晚5:00", period: "yen" },
+  { hour24: 18, thai: "6 โมงเย็น",      phonetic: "6 mōoŋ yēn",    cnLabel: "傍晚6:00", period: "yen" },
+  { hour24: 19, thai: "1 ทุ่ม",         phonetic: "1 thûm",        cnLabel: "晚上7:00", period: "thum" },
+  { hour24: 20, thai: "2 ทุ่ม",         phonetic: "2 thûm",        cnLabel: "晚上8:00", period: "thum" },
+  { hour24: 21, thai: "3 ทุ่ม",         phonetic: "3 thûm",        cnLabel: "晚上9:00", period: "thum" },
+  { hour24: 22, thai: "4 ทุ่ม",         phonetic: "4 thûm",        cnLabel: "晚上10:00", period: "thum" },
+  { hour24: 23, thai: "5 ทุ่ม",         phonetic: "5 thûm",        cnLabel: "晚上11:00", period: "thum" },
+];
+
+const TC_STORAGE_KEY = 'thai-clock-zh-best';
+const TC_ROUNDS_PER_GAME = 12;
+const TC_POINTS = [100, 50, 25]; // 1st try, 2nd try, 3rd+ try
+
+let tcState = {
+  round: 0,
+  score: 0,
+  usedTargets: [],
+  currentRound: null,
+};
+
+function tcShuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function tcPickTarget() {
+  if (tcState.usedTargets.length >= CLOCK_DATA.length - 1) tcState.usedTargets = [];
+  const candidates = CLOCK_DATA.filter((v, i) => !tcState.usedTargets.includes(i));
+  const pick = candidates[Math.floor(Math.random() * candidates.length)];
+  const idx = CLOCK_DATA.indexOf(pick);
+  tcState.usedTargets.push(idx);
+  return idx;
+}
+
+// decoys prefer 1-2 entries from the same period (e.g. another "mōoŋ cháaw"
+// hour) so the choice is a genuine discrimination, not a free giveaway
+function tcBuildDecoys(targetIdx) {
+  const target = CLOCK_DATA[targetIdx];
+  const pool = CLOCK_DATA.filter((v, i) => i !== targetIdx);
+  const samePeriod = tcShuffle(pool.filter(v => v.period === target.period));
+  let decoys = samePeriod.slice(0, Math.min(2, samePeriod.length));
+  const remaining = tcShuffle(pool.filter(v => !decoys.includes(v)));
+  while (decoys.length < 3 && remaining.length) decoys.push(remaining.pop());
+  return tcShuffle(decoys).slice(0, 3);
+}
+
+function tcClockFaceSVG(hour24, size) {
+  const hourFor12 = hour24 % 12;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 3;
+  const angle = hourFor12 * 30 - 90;
+  const rad = angle * Math.PI / 180;
+  const handLen = r * 0.5;
+  const hx = (cx + handLen * Math.cos(rad)).toFixed(1);
+  const hy = (cy + handLen * Math.sin(rad)).toFixed(1);
+  const minuteY = (cy - r * 0.72).toFixed(1);
+
+  let ticks = '';
+  for (let i = 0; i < 12; i++) {
+    const a = i * 30 * Math.PI / 180;
+    const x1 = (cx + (r - 4) * Math.sin(a)).toFixed(1), y1 = (cy - (r - 4) * Math.cos(a)).toFixed(1);
+    const x2 = (cx + r * Math.sin(a)).toFixed(1), y2 = (cy - r * Math.cos(a)).toFixed(1);
+    ticks += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" style="stroke:var(--border);stroke-width:2"/>';
+  }
+
+  return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '">' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" style="fill:var(--card);stroke:var(--border);stroke-width:2"/>' +
+    ticks +
+    '<line x1="' + cx + '" y1="' + cy + '" x2="' + cx + '" y2="' + minuteY + '" style="stroke:var(--text);stroke-width:2;stroke-linecap:round"/>' +
+    '<line x1="' + cx + '" y1="' + cy + '" x2="' + hx + '" y2="' + hy + '" style="stroke:var(--accent);stroke-width:4;stroke-linecap:round"/>' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="4" style="fill:var(--accent)"/>' +
+    '</svg>';
+}
+
+function tcSpeak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'th-TH';
+  utt.rate = 0.85;
+  const voices = window.speechSynthesis.getVoices();
+  const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th'));
+  if (thaiVoice) utt.voice = thaiVoice;
+  window.speechSynthesis.speak(utt);
+}
+
+let tcAudioCtx = null;
+function tcPlayChime() {
+  try {
+    tcAudioCtx = tcAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = tcAudioCtx.currentTime;
+    const notes = [660, 880, 1320];
+    notes.forEach((freq, i) => {
+      const osc = tcAudioCtx.createOscillator();
+      const gain = tcAudioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.08 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.35);
+      osc.connect(gain);
+      gain.connect(tcAudioCtx.destination);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.4);
+    });
+  } catch (e) {
+    // audio unavailable - game still works visually
+  }
+}
+
+function tcRenderRound() {
+  const body = document.getElementById('tc-round-body');
+  const r = tcState.currentRound;
+  const modeLabel = document.getElementById('tc-mode-label');
+
+  if (r.mode === 'clockToText') {
+    modeLabel.textContent = t('tcModeClockToText');
+    body.innerHTML = '<div class="tc-clock-wrap">' + tcClockFaceSVG(r.target.hour24, 190) + '</div>' +
+      '<div class="tc-choices" id="tc-choices"></div>';
+    const choicesEl = document.getElementById('tc-choices');
+    r.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'tc-choice-btn';
+      btn.innerHTML = '<span class="tc-choice-thai">' + opt.thai + '</span><span class="tc-choice-phon">' + opt.phonetic + '</span>';
+      btn.addEventListener('click', () => tcHandleChoice(opt, btn));
+      choicesEl.appendChild(btn);
+    });
+  } else {
+    modeLabel.textContent = t('tcModeTextToClock');
+    body.innerHTML = '<div class="tc-prompt">' +
+      '<div class="tc-prompt-thai">' + r.target.thai + '</div>' +
+      '<div class="tc-prompt-phon">' + r.target.phonetic + '</div>' +
+      '<button class="tc-speak-btn" id="tc-speak-btn">&#128266; ' + t('tcListenBtn') + '</button>' +
+      '</div>' +
+      '<div class="tc-clock-choices" id="tc-choices"></div>';
+    document.getElementById('tc-speak-btn').addEventListener('click', () => tcSpeak(r.target.thai));
+    const choicesEl = document.getElementById('tc-choices');
+    r.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'tc-clock-choice';
+      btn.innerHTML = tcClockFaceSVG(opt.hour24, 90);
+      btn.addEventListener('click', () => tcHandleChoice(opt, btn));
+      choicesEl.appendChild(btn);
+    });
+  }
+}
+
+function tcHandleChoice(opt, btnEl) {
+  const r = tcState.currentRound;
+  if (r.answered) return;
+
+  if (opt === r.target) {
+    r.answered = true;
+    const points = TC_POINTS[Math.min(r.wrongTries, TC_POINTS.length - 1)];
+    tcState.score += points;
+    document.getElementById('tc-hud-score').textContent = tcState.score;
+
+    btnEl.classList.add('correct');
+    tcPlayChime();
+    tcSpeak(r.target.thai);
+
+    document.querySelectorAll('#tc-choices button').forEach(b => {
+      if (b !== btnEl) b.style.pointerEvents = 'none';
+    });
+
+    const cap = document.createElement('div');
+    cap.className = 'tc-reveal-caption';
+    cap.textContent = r.target.cnLabel + ' · +' + points;
+    document.getElementById('tc-round-body').appendChild(cap);
+
+    document.getElementById('tc-btn-next').classList.add('show');
+  } else {
+    r.wrongTries++;
+    btnEl.classList.add('wrong');
+  }
+}
+
+function tcBuildRound() {
+  const targetIdx = tcPickTarget();
+  const target = CLOCK_DATA[targetIdx];
+  const decoys = tcBuildDecoys(targetIdx);
+  const options = tcShuffle([target, ...decoys]);
+  const mode = Math.random() < 0.5 ? 'clockToText' : 'textToClock';
+  return { target, options, mode, wrongTries: 0, answered: false };
+}
+
+function tcStartRound() {
+  tcState.round++;
+  document.getElementById('tc-hud-round').textContent = tcState.round + ' / ' + TC_ROUNDS_PER_GAME;
+  document.getElementById('tc-btn-next').classList.remove('show');
+  tcState.currentRound = tcBuildRound();
+  tcRenderRound();
+}
+
+function tcEndGame() {
+  const best = parseInt(localStorage.getItem(TC_STORAGE_KEY) || '0', 10);
+  const newBest = Math.max(best, tcState.score);
+  try { localStorage.setItem(TC_STORAGE_KEY, newBest); } catch (e) {}
+
+  document.getElementById('tc-end-score').textContent = tcState.score;
+  document.getElementById('tc-end-best').textContent = newBest;
+  tcShowScreen('tc-screen-end');
+}
+
+function tcNextOrEnd() {
+  if (tcState.round >= TC_ROUNDS_PER_GAME) {
+    tcEndGame();
+  } else {
+    tcStartRound();
+  }
+}
+
+function tcShowScreen(id) {
+  document.querySelectorAll('#view-clockgame .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function tcStartGame() {
+  tcState.round = 0;
+  tcState.score = 0;
+  tcState.usedTargets = [];
+  document.getElementById('tc-hud-score').textContent = '0';
+  tcShowScreen('tc-screen-game');
+  tcStartRound();
+}
+
+function tcQuitToHome() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  tcShowScreen('tc-screen-start');
+  tcRenderBestScore();
+  if (typeof window.goHome === 'function') {
+    window.goHome();
+  }
+}
+
+function tcRenderBestScore() {
+  const best = parseInt(localStorage.getItem(TC_STORAGE_KEY) || '0', 10);
+  const el = document.getElementById('tc-best-score-display');
+  el.innerHTML = best > 0 ? t('wcBestScoreLabel') + '：<b>' + best + '</b>' : '';
+}
+
+return { startGame: tcStartGame, quitToHome: tcQuitToHome, nextOrEnd: tcNextOrEnd, renderBestScore: tcRenderBestScore, refreshLanguage: function() {
+  // Called when the 简体/繁體 toggle changes - update the current round's
+  // mode label and speak button immediately, plus the best-score line
+  const modeLabel = document.getElementById('tc-mode-label');
+  if (modeLabel && tcState.currentRound) {
+    modeLabel.textContent = tcState.currentRound.mode === 'clockToText' ? t('tcModeClockToText') : t('tcModeTextToClock');
+  }
+  const speakBtn = document.getElementById('tc-speak-btn');
+  if (speakBtn) speakBtn.innerHTML = '&#128266; ' + t('tcListenBtn');
+  tcRenderBestScore();
+}, init: function() {
+  document.getElementById('tc-btn-start').addEventListener('click', tcStartGame);
+  document.getElementById('tc-btn-next').addEventListener('click', tcNextOrEnd);
+  document.getElementById('tc-btn-end-again').addEventListener('click', tcStartGame);
+  document.getElementById('tc-btn-end-home').addEventListener('click', tcQuitToHome);
+  document.getElementById('tc-btn-quit-game').addEventListener('click', tcQuitToHome);
+  tcRenderBestScore();
+}};
+})();
+
+ThaiClock.init();
 </script>
 </body>
 </html>
