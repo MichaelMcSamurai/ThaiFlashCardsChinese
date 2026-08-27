@@ -10114,30 +10114,15 @@ function speakThai(text) {
   window.speechSynthesis.speak(utt);
 }
 
-// simple celebratory chime using Web Audio (no external asset needed)
-let audioCtx = null;
-function playChime() {
-  try {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const now = audioCtx.currentTime;
-    const notes = [660, 880, 1320]; // bright ascending triad
-    notes.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.0001, now + i * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.08 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.35);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now + i * 0.08);
-      osc.stop(now + i * 0.08 + 0.4);
-    });
-  } catch (e) {
-    // audio unavailable - game still works visually
-  }
-}
+// NOTE: this used to play a celebratory chime via a dedicated Web Audio
+// AudioContext. That pattern has been observed to permanently steal the
+// shared audio output session away from SpeechSynthesis on some browsers -
+// once a game with this chime had been played, the flashcard decks'
+// pronounce buttons would go silent for the rest of the page's life, even
+// though speechSynthesis reported itself as "speaking". There's no
+// reliable way to undo that after the fact, so the chime is intentionally
+// a no-op now; the visual fanfare/animation still provides feedback.
+function playChime() {}
 
 // ============================================================
 // ROUND FLOW
@@ -10418,36 +10403,17 @@ function tcSpeak(text) {
   window.speechSynthesis.speak(utt);
 }
 
-let tcAudioCtx = null;
-function tcPlayChime() {
-  try {
-    tcAudioCtx = tcAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const now = tcAudioCtx.currentTime;
-    const notes = [660, 880, 1320];
-    notes.forEach((freq, i) => {
-      const osc = tcAudioCtx.createOscillator();
-      const gain = tcAudioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.0001, now + i * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.08 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.35);
-      osc.connect(gain);
-      gain.connect(tcAudioCtx.destination);
-      osc.start(now + i * 0.08);
-      osc.stop(now + i * 0.08 + 0.4);
-    });
-    // Suspend the audio context once the chime finishes - leaving it
-    // "running" indefinitely can make some browsers hold onto the shared
-    // audio output device, which has been observed to silently block the
-    // separate SpeechSynthesis pronunciation audio on the flashcard decks
-    // afterward.
-    const ctx = tcAudioCtx;
-    setTimeout(() => { if (ctx && ctx.state === 'running') ctx.suspend(); }, 500);
-  } catch (e) {
-    // audio unavailable - game still works visually
-  }
-}
+// NOTE: the correct-answer chime used to be synthesized with the Web Audio
+// API (a dedicated AudioContext + oscillators). On several browsers that
+// turned out to permanently steal the shared audio output session away
+// from SpeechSynthesis for the rest of the page's life - once the clock
+// game had been played, the flashcard decks' pronounce buttons would go
+// silent even though speechSynthesis reported itself as "speaking". There
+// is no reliable browser-side workaround (suspending/closing the
+// AudioContext after the fact does not undo the damage), so the chime is
+// intentionally left out - tcSpeak() below still gives audible feedback by
+// reading the correct answer aloud, without ever touching AudioContext.
+function tcPlayChime() {}
 
 function tcRenderRound() {
   const body = document.getElementById('tc-round-body');
@@ -10567,7 +10533,6 @@ function tcStartGame() {
 
 function tcQuitToHome() {
   if (window.speechSynthesis) window.speechSynthesis.cancel();
-  if (tcAudioCtx) { try { tcAudioCtx.close(); } catch (e) {} tcAudioCtx = null; }
   tcShowScreen('tc-screen-start');
   tcRenderBestScore();
   if (typeof window.goHome === 'function') {
