@@ -1385,7 +1385,7 @@
   <div class="home-wrap">
     <div class="home-header">
       <div class="logo-thai">ศึกษาภาษาไทย</div>
-      <h1>Thai <span>Study</span><span class="version-tag">v0.06a</span></h1>
+      <h1>Thai <span>Study</span><span class="version-tag">v0.06b</span></h1>
       <p class="subtitle" id="home-subtitle">选择一个卡组开始学习</p>
       <div class="zh-variant-toggle">
         <label class="zh-variant-option">
@@ -10105,13 +10105,20 @@ function calcPoints(elapsedSeconds) {
 function speakThai(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'th-TH';
-  utt.rate = 0.85;
-  const voices = window.speechSynthesis.getVoices();
-  const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th'));
-  if (thaiVoice) utt.voice = thaiVoice;
-  window.speechSynthesis.speak(utt);
+  // Chrome has a well-known bug where calling speak() immediately after
+  // cancel() can corrupt the synthesis queue for the rest of the page's
+  // life (all future speak() calls silently do nothing). A short delay
+  // between cancel() and speak() avoids it - the same pattern pronounce()
+  // and pronounceExample() already use below.
+  setTimeout(() => {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'th-TH';
+    utt.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th'));
+    if (thaiVoice) utt.voice = thaiVoice;
+    window.speechSynthesis.speak(utt);
+  }, 60);
 }
 
 // NOTE: this used to play a celebratory chime via a dedicated Web Audio
@@ -10394,13 +10401,18 @@ function tcClockFaceSVG(hour24, size) {
 function tcSpeak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'th-TH';
-  utt.rate = 0.85;
-  const voices = window.speechSynthesis.getVoices();
-  const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th'));
-  if (thaiVoice) utt.voice = thaiVoice;
-  window.speechSynthesis.speak(utt);
+  // Same Chrome cancel()-then-speak() race condition as speakThai() above -
+  // a short delay avoids corrupting the synthesis queue for the rest of
+  // the page's life.
+  setTimeout(() => {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'th-TH';
+    utt.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const thaiVoice = voices.find(v => v.lang === 'th-TH' || v.lang.startsWith('th'));
+    if (thaiVoice) utt.voice = thaiVoice;
+    window.speechSynthesis.speak(utt);
+  }, 60);
 }
 
 // NOTE: the correct-answer chime used to be synthesized with the Web Audio
