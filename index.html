@@ -10437,6 +10437,13 @@ function tcPlayChime() {
       osc.start(now + i * 0.08);
       osc.stop(now + i * 0.08 + 0.4);
     });
+    // Suspend the audio context once the chime finishes - leaving it
+    // "running" indefinitely can make some browsers hold onto the shared
+    // audio output device, which has been observed to silently block the
+    // separate SpeechSynthesis pronunciation audio on the flashcard decks
+    // afterward.
+    const ctx = tcAudioCtx;
+    setTimeout(() => { if (ctx && ctx.state === 'running') ctx.suspend(); }, 500);
   } catch (e) {
     // audio unavailable - game still works visually
   }
@@ -10560,6 +10567,7 @@ function tcStartGame() {
 
 function tcQuitToHome() {
   if (window.speechSynthesis) window.speechSynthesis.cancel();
+  if (tcAudioCtx) { try { tcAudioCtx.close(); } catch (e) {} tcAudioCtx = null; }
   tcShowScreen('tc-screen-start');
   tcRenderBestScore();
   if (typeof window.goHome === 'function') {
